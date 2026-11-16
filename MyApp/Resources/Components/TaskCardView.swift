@@ -8,15 +8,22 @@
 import UIKit
 
 final class TaskCard: UIView {
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
 
     let cardView = UIView()
-
-    var cardCornerRadius: CGFloat = 20 {
-        didSet {
+    var cardCornerRadius: CGFloat = 20 {didSet {
             layer.cornerRadius = cardCornerRadius
         }
     }
-
     var cardBackgroundColor: UIColor = .darkPurple {
         didSet {
             backgroundColor = cardBackgroundColor
@@ -28,12 +35,7 @@ final class TaskCard: UIView {
     private var contentTrailingConstraint: NSLayoutConstraint?
     private var contentBottomConstraint: NSLayoutConstraint?
 
-    var contentInsets = UIEdgeInsets(
-        top: 12,
-        left: 12,
-        bottom: 12,
-        right: 12
-    ) {
+    var contentInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12) {
         didSet {
             contentTopConstraint?.constant = contentInsets.top
             contentLeadingConstraint?.constant = contentInsets.left
@@ -42,19 +44,7 @@ final class TaskCard: UIView {
         }
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setup()
-    }
-
     private func setup() {
-
-        backgroundColor = cardBackgroundColor
 
         layer.cornerRadius = cardCornerRadius
         layer.masksToBounds = true
@@ -94,15 +84,15 @@ final class TaskCard: UIView {
     }
 }
 
-import UIKit
+final class TaskCardView: UIView {
 
-final class TaskCardView: UIViewController {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupCards()
+    }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = .black
-
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
         setupCards()
     }
 
@@ -115,13 +105,13 @@ final class TaskCardView: UIViewController {
 
         card.translatesAutoresizingMaskIntoConstraints = false
 
-        view.addSubview(card)
+        addSubview(card)
 
         NSLayoutConstraint.activate([
-            card.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
-            card.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            card.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            card.heightAnchor.constraint(equalToConstant: 72)
+            card.topAnchor.constraint(equalTo: topAnchor),
+            card.leadingAnchor.constraint(equalTo: leadingAnchor),
+            card.trailingAnchor.constraint(equalTo: trailingAnchor),
+            card.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
 
         let checkButton = CheckButton()
@@ -184,18 +174,9 @@ final class TaskCardView: UIViewController {
 
         NSLayoutConstraint.activate([
 
-            stackView.leadingAnchor.constraint(
-                equalTo: card.cardView.leadingAnchor
-            ),
-
-            stackView.trailingAnchor.constraint(
-                equalTo: card.cardView.trailingAnchor
-            ),
-
-            stackView.centerYAnchor.constraint(
-                equalTo: card.cardView.centerYAnchor
-            ),
-
+            stackView.leadingAnchor.constraint(equalTo: card.cardView.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: card.cardView.trailingAnchor),
+            stackView.centerYAnchor.constraint(equalTo: card.cardView.centerYAnchor),
             stackView.heightAnchor.constraint(equalToConstant: 26)
 
         ])
@@ -205,6 +186,8 @@ final class TaskCardView: UIViewController {
         }
 
         checkButton.setChecked(true)
+        
+        heightAnchor.constraint(equalToConstant: 72).isActive = true
     }
 }
 

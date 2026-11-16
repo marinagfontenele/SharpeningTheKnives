@@ -10,7 +10,12 @@ final class ContentView: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        edgesForExtendedLayout = .all
+        extendedLayoutIncludesOpaqueBars = true
+
         view.backgroundColor = .backgroundPurple
+
         configureHeader()
         configureBlocks()
         setupExample()
@@ -19,7 +24,7 @@ final class ContentView: UIViewController {
     private func configureHeader() {
 
         titleLabel.text = "Tarefas"
-        titleLabel.font = .boldSystemFont(ofSize: 30)
+        titleLabel.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .largeTitle).pointSize, weight: .bold)
         titleLabel.textColor = .white
 
         let config = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
@@ -36,10 +41,10 @@ final class ContentView: UIViewController {
         NSLayoutConstraint.activate([
 
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
 
             addButton.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
+            addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
 
         ])
     }
@@ -65,10 +70,10 @@ final class ContentView: UIViewController {
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            blocksStackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
-            blocksStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
-            blocksStackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
-            blocksStackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            blocksStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            blocksStackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            blocksStackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            blocksStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
 
             blocksStackView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
 
@@ -86,17 +91,6 @@ final class ContentView: UIViewController {
     }
 }
 
-struct ContentViewRepresentable: UIViewControllerRepresentable {
-
-    func makeUIViewController(context: Context) -> ContentView {
-        return ContentView()
-    }
-
-    func updateUIViewController(_ uiViewController: ContentView, context: Context) {
-
-    }
-}
-
 #Preview {
-    ContentViewRepresentable()
+    return ContentView()
 }
