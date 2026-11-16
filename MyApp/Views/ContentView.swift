@@ -10,7 +10,7 @@ final class ContentView: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        view.backgroundColor = .backgroundPurple
         configureHeader()
         configureBlocks()
         setupExample()
@@ -44,7 +44,6 @@ final class ContentView: UIViewController {
         ])
     }
 
-    // MARK: - Blocks
 
     private func configureBlocks() {
 
@@ -64,7 +63,7 @@ final class ContentView: UIViewController {
             scrollView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             blocksStackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
             blocksStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
@@ -75,8 +74,6 @@ final class ContentView: UIViewController {
 
         ])
     }
-
-    // MARK: - Example
 
     private func setupExample() {
 

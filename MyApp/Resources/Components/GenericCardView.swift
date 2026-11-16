@@ -89,46 +89,4 @@ final class GenericCardView: UIView {
     }
 }
 
-#if canImport(SwiftUI) && DEBUG
-import SwiftUI
 
-#Preview("GenericCardView") {
-    let container = UIView()
-    container.backgroundColor = .softPurple
-
-    let card = GenericCardView()
-    card.translatesAutoresizingMaskIntoConstraints = false
-
-    let titleLabel = UILabel()
-    titleLabel.text = "Título do Card"
-    titleLabel.font = .preferredFont(forTextStyle: .headline)
-    titleLabel.textColor = .label
-
-    let subtitleLabel = UILabel()
-    subtitleLabel.text = "Conteúdo genérico para você estilizar como quiser."
-    subtitleLabel.font = .preferredFont(forTextStyle: .subheadline)
-    subtitleLabel.textColor = .secondaryLabel
-    subtitleLabel.numberOfLines = 0
-
-    let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
-    stackView.axis = .vertical
-    stackView.spacing = 8
-    stackView.translatesAutoresizingMaskIntoConstraints = false
-
-    card.contentView.addSubview(stackView)
-    container.addSubview(card)
-
-    NSLayoutConstraint.activate([
-        stackView.topAnchor.constraint(equalTo: card.contentView.topAnchor),
-        stackView.leadingAnchor.constraint(equalTo: card.contentView.leadingAnchor),
-        stackView.trailingAnchor.constraint(equalTo: card.contentView.trailingAnchor),
-        stackView.bottomAnchor.constraint(equalTo: card.contentView.bottomAnchor),
-
-        card.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-        card.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
-        card.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -20),
-    ])
-
-    return container
-}
-#endif
