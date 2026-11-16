@@ -19,7 +19,7 @@ final class TaskLabel: UILabel {
         guard let text = text else { return }
 
         var attributes: [NSAttributedString.Key: Any] = [
-            .font: font ?? .boldSystemFont(ofSize: 18),
+            .font: font ?? .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title2).pointSize, weight: .semibold),
             .foregroundColor: textColor ?? .white
         ]
 

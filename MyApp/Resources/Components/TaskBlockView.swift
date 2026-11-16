@@ -40,7 +40,7 @@ final class TaskBlockView: UIStackView {
         // Título
 
         titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title2).pointSize, weight: .bold)
+        titleLabel.font = .systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title2).pointSize, weight: .semibold)
         titleLabel.textColor = .white
 
         // Stack das tarefas
