@@ -41,10 +41,10 @@ final class ContentView: UIViewController {
         NSLayoutConstraint.activate([
 
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
 
             addButton.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
-            addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
+            addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
 
         ])
     }
@@ -91,18 +91,6 @@ final class ContentView: UIViewController {
     }
 }
 
-struct ContentViewRepresentable: UIViewControllerRepresentable {
-
-    func makeUIViewController(context: Context) -> ContentView {
-        return ContentView()
-    }
-
-    func updateUIViewController(_ uiViewController: ContentView, context: Context) {
-
-    }
-}
-
 #Preview {
-    ContentViewRepresentable()
-        .ignoresSafeArea()
+    return ContentView()
 }
