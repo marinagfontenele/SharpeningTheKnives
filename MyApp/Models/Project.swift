@@ -1,7 +1,9 @@
+import SwiftData
 import Foundation
 
-struct Project: Identifiable, Codable, Hashable {
-    let id: UUID
+@Model
+final class Project{
+    var id: UUID
     var name: String
     var tasks: [TaskItem]
 
@@ -17,7 +19,7 @@ struct Project: Identifiable, Codable, Hashable {
 
     /// Reinicia o projeto para reaproveitamento, mantendo sua estrutura
     /// e limpando o progresso das tarefas e subtarefas.
-    mutating func resetProgress() {
+    func resetProgress() {
         for taskIndex in tasks.indices {
             tasks[taskIndex].isCompleted = false
             for subtaskIndex in tasks[taskIndex].subtasks.indices {

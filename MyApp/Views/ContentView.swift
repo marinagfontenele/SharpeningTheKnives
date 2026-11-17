@@ -1,7 +1,27 @@
 import UIKit
-import SwiftUI
+import SwiftData
 
 final class ContentView: UIViewController {
+    
+//     Liste aqui todos os seus @Model, ex.: ModelContainer(for: Item.self, Category.self)
+    lazy var container: ModelContainer = {
+        do {
+            return try ModelContainer(for: TaskBlock.self, TaskItem.self, Tag.self, Subtask.self, Project.self)
+        } catch {
+            fatalError("Erro ao criar o ModelContainer: \(error)")
+        }
+    }()
+
+    private var context: ModelContext { container.mainContext }
+
+        init() {
+//            self.container = container
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) não é usado")
+        }
 
     private let titleLabel = UILabel()
     private let addButton = UIButton(type: .system)
@@ -127,6 +147,10 @@ final class ContentView: UIViewController {
     }
 }
 
-#Preview {
-    return ContentView()
-}
+//#Preview {
+//    let container = try! ModelContainer(
+//        for: TaskBlock.self, TaskItem.self, Tag.self, Subtask.self, Project.self,
+//            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+//        )
+//        return ContentView(container: container)
+//}
