@@ -1,7 +1,9 @@
+import SwiftData
 import Foundation
 
-struct Subtask: Identifiable, Codable, Hashable {
-    let id: UUID
+@Model
+final class Subtask{
+    var id: UUID
     var name: String
     var priority: Priority?
     var tag: Tag?

@@ -1,7 +1,9 @@
+import SwiftData
 import Foundation
 
-struct TaskItem: Identifiable, Codable, Hashable {
-    let id: UUID
+@Model
+final class TaskItem{
+    var id: UUID
     var name: String
     var priority: Priority?
     var tag: Tag?
