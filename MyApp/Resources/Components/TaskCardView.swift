@@ -136,23 +136,23 @@ final class TaskCardView: UIView {
         let indicator = UIView()
 
         indicator.backgroundColor = .systemRed
-        indicator.layer.cornerRadius = 4.5
+        indicator.layer.cornerRadius = 6
 
         NSLayoutConstraint.activate([
 
-            indicator.widthAnchor.constraint(equalToConstant: 9),
-            indicator.heightAnchor.constraint(equalToConstant: 9)
+            indicator.widthAnchor.constraint(equalToConstant: 12),
+            indicator.heightAnchor.constraint(equalToConstant: 12)
 
         ])
 
-        let addButton = AddSubtaskButton()
+       // let addButton = AddSubtaskButton()
 
-        addButton.translatesAutoresizingMaskIntoConstraints = false
+       // addButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
 
-            addButton.widthAnchor.constraint(equalToConstant: 26),
-            addButton.heightAnchor.constraint(equalToConstant: 26)
+         //   addButton.widthAnchor.constraint(equalToConstant: 26),
+          //  addButton.heightAnchor.constraint(equalToConstant: 26)
 
         ])
 
@@ -160,7 +160,7 @@ final class TaskCardView: UIView {
             checkButton,
             label,
             indicator,
-            addButton
+         //   addButton
         ])
 
         stackView.axis = .horizontal

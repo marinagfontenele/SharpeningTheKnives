@@ -6,16 +6,19 @@ final class TaskBlockView: UIStackView {
     let tasksStackView = UIStackView()
     private let addButton = UIButton()
     private let blockView = UIView()
+    private weak var viewController: UIViewController?
 
     init(title: String) {
         super.init(frame: .zero)
         configure(title: title)
+        configureAddTaskButton()
         setupExample()
     }
 
     required init(coder: NSCoder) {
         super.init(coder: coder)
         configure(title: "")
+        configureAddTaskButton()
         setupExample()
     }
 
@@ -76,6 +79,55 @@ final class TaskBlockView: UIStackView {
 
             blockView.heightAnchor.constraint(equalToConstant: 20)
         ])
+    }
+    
+    private func configureAddTaskButton() {
+        addButton.addTarget(
+            self,
+            action: #selector(openTaskBlock),
+            for: .touchUpInside
+        )
+    }
+    
+    
+    @objc private func openTaskBlock() {
+        let addTask = AddTaskView()
+
+        let sheet = UIViewController()
+        sheet.view.backgroundColor = .sheetBackground
+
+        sheet.view.addSubview(addTask)
+        addTask.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            addTask.topAnchor.constraint(equalTo: sheet.view.topAnchor),
+            addTask.leadingAnchor.constraint(equalTo: sheet.view.leadingAnchor),
+            addTask.trailingAnchor.constraint(equalTo: sheet.view.trailingAnchor),
+            addTask.bottomAnchor.constraint(equalTo: sheet.view.bottomAnchor)
+        ])
+
+        sheet.modalPresentationStyle = .pageSheet
+
+        if let presentation = sheet.sheetPresentationController {
+            presentation.detents = [.medium()]
+            presentation.prefersGrabberVisible = true
+            presentation.preferredCornerRadius = 24
+        }
+
+        findViewController()?.present(sheet, animated: true)
+    }
+    
+    private func findViewController() -> UIViewController? {
+        var responder: UIResponder? = self
+
+        while let nextResponder = responder?.next {
+            if let viewController = nextResponder as? UIViewController {
+                return viewController
+            }
+            responder = nextResponder
+        }
+
+        return nil
     }
     
     private func setupExample() {
