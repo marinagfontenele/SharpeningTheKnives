@@ -70,7 +70,7 @@ final class AddBlockView: UIStackView {
         titleLabel.textColor = .white
         titleLabel.textAlignment = .center
         
-        informationLabel.text = "Nome do Bloco"
+        informationLabel.text = "Nome do bloco"
         informationLabel.font = .systemFont(
             ofSize: UIFont.preferredFont(forTextStyle: .headline).pointSize,
             weight: .regular

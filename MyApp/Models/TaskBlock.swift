@@ -1,7 +1,10 @@
+import SwiftData
 import Foundation
 
-struct TaskBlock: Identifiable, Codable, Hashable {
-    let id: UUID
+@Model
+final class TaskBlock {
+
+    var id: UUID
     var name: String
     var tasks: [TaskItem]
     var order: Int

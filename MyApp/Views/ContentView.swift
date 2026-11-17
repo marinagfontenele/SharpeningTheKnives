@@ -18,7 +18,7 @@ final class ContentView: UIViewController {
 
         configureHeader()
         configureBlocks()
-        configureAddButton()
+        configureAddBlockButton()
         setupExample()
     }
 
@@ -81,7 +81,7 @@ final class ContentView: UIViewController {
         ])
     }
     
-    private func configureAddButton() {
+    private func configureAddBlockButton() {
         addButton.addTarget(
             self,
             action: #selector(openAddBlock),
