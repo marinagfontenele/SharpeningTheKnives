@@ -18,6 +18,7 @@ final class ContentView: UIViewController {
 
         configureHeader()
         configureBlocks()
+        configureAddButton()
         setupExample()
     }
 
@@ -78,6 +79,41 @@ final class ContentView: UIViewController {
             blocksStackView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
 
         ])
+    }
+    
+    private func configureAddButton() {
+        addButton.addTarget(
+            self,
+            action: #selector(openAddBlock),
+            for: .touchUpInside
+        )
+    }
+
+    @objc private func openAddBlock() {
+        let addBlock = AddBlockView()
+
+        let sheet = UIViewController()
+        sheet.view.backgroundColor = .sheetBackground
+
+        sheet.view.addSubview(addBlock)
+        addBlock.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            addBlock.topAnchor.constraint(equalTo: sheet.view.topAnchor),
+            addBlock.leadingAnchor.constraint(equalTo: sheet.view.leadingAnchor),
+            addBlock.trailingAnchor.constraint(equalTo: sheet.view.trailingAnchor),
+            addBlock.bottomAnchor.constraint(equalTo: sheet.view.bottomAnchor)
+        ])
+
+        sheet.modalPresentationStyle = .pageSheet
+
+        if let presentation = sheet.sheetPresentationController {
+            presentation.detents = [.medium()]
+            presentation.prefersGrabberVisible = true
+            presentation.preferredCornerRadius = 24
+        }
+
+        present(sheet, animated: true)
     }
 
     private func setupExample() {

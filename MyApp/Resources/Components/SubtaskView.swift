@@ -33,7 +33,7 @@ final class SubtaskView: UIView {
 
         subtaskLabel.text = title
         subtaskLabel.font = .systemFont(ofSize: 16)
-        subtaskLabel.textColor = .white
+        subtaskLabel.textColor = .black
 
         let stackView = UIStackView(arrangedSubviews: [
             checkButton,
@@ -61,4 +61,8 @@ final class SubtaskView: UIView {
             self?.subtaskLabel.isCompleted = isChecked
         }
     }
+}
+
+#Preview{
+    SubtaskView(title: "teste")
 }
