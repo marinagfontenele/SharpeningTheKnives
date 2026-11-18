@@ -122,9 +122,9 @@ final class TaskBlockView: UIStackView {
             sheet?.dismiss(animated: true)
         }
 
-        addTask.onSave = { [weak self, weak sheet] name in
+        addTask.onSave = { [weak self, weak sheet] name, priority in
             guard let self else { return }
-            let newItem = TaskItem(name: name, order: self.block.tasks.count)
+            let newItem = TaskItem(name: name, priority: priority, order: self.block.tasks.count)
             self.block.tasks.append(newItem)
             try? DataManager.shared.save()
             sheet?.dismiss(animated: true)
@@ -180,7 +180,11 @@ final class TaskBlockView: UIStackView {
 
         let tasks = block.tasks.sorted { $0.order < $1.order }
         for task in tasks {
-            let taskView = TaskCardView(taskName: task.name, isCompleted: task.isCompleted)
+            let taskView = TaskCardView(
+                taskName: task.name,
+                isCompleted: task.isCompleted,
+                priority: task.priority
+            )
             tasksStackView.addArrangedSubview(taskView)
         }
     }

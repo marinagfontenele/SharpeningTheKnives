@@ -88,22 +88,22 @@ final class TaskCardView: UIView {
 
     private let taskLabel = TaskLabel()
 
-    init(taskName: String = "Fazer as unhas", isCompleted: Bool = false) {
+    init(taskName: String = "Fazer as unhas", isCompleted: Bool = false, priority: Priority? = nil) {
         super.init(frame: .zero)
-        setupCards(taskName: taskName, isCompleted: isCompleted)
+        setupCards(taskName: taskName, isCompleted: isCompleted, priority: priority)
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupCards(taskName: "Fazer as unhas", isCompleted: false)
+        setupCards(taskName: "Fazer as unhas", isCompleted: false, priority: nil)
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupCards(taskName: "Fazer as unhas", isCompleted: false)
+        setupCards(taskName: "Fazer as unhas", isCompleted: false, priority: nil)
     }
 
-    private func setupCards(taskName: String, isCompleted: Bool) {
+    private func setupCards(taskName: String, isCompleted: Bool, priority: Priority?) {
 
         let card = TaskCard()
 
@@ -140,8 +140,9 @@ final class TaskCardView: UIView {
 
         let indicator = UIView()
 
-        indicator.backgroundColor = .systemRed
+        indicator.backgroundColor = priority?.color
         indicator.layer.cornerRadius = 6
+        indicator.isHidden = priority == nil
 
         NSLayoutConstraint.activate([
 

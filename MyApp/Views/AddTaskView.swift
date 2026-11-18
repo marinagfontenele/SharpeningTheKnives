@@ -8,9 +8,9 @@
 import UIKit
 
 final class AddTaskView: UIStackView {
-    
-    // variável recebe uma string e não retorna nada
-    var onSave: ((String) -> Void)?
+
+    // variável recebe nome e prioridade e não retorna nada
+    var onSave: ((String, Priority?) -> Void)?
     // variável não recee nada e não retorna nada
     var onClose: (() -> Void)?
 
@@ -20,7 +20,8 @@ final class AddTaskView: UIStackView {
     private let saveButton = UIButton()
     private let closeButton = UIButton()
     private let nameInput = PaddedTextField()
-    
+    private let priorityPicker = PriorityPickerView()
+
     let checkConfig = UIImage.SymbolConfiguration(
         pointSize: 40,
         weight: .regular
@@ -168,13 +169,19 @@ final class AddTaskView: UIStackView {
             for: .touchUpInside
         )
 
+    //    configurePriorityPicker()
+
         addArrangedSubview(navBarView)
         addArrangedSubview(informationLabel)
-        
+
         setCustomSpacing(10, after: informationLabel)
-        
+
         addArrangedSubview(nameInput)
-        
+
+        setCustomSpacing(20, after: nameInput)
+
+        addArrangedSubview(priorityPicker)
+
         let spacer = UIView()
         spacer.setContentHuggingPriority(.defaultLow, for: .vertical)
         spacer.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
@@ -194,12 +201,16 @@ final class AddTaskView: UIStackView {
     @objc private func saveTapped() {
         //remove espaços em branco e quebras de linha
         let name = titulo.trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
         //guard: verifica uma condição e interrompe a execução caso ela não seja atendida.
         guard !name.isEmpty else { return }
-        
+
         //Se existir uma função armazenada em onSave, ela será executada, recebendo o nome que acabou de ser validado
-        onSave?(name)
+        onSave?(name, priorityPicker.selectedPriority)
+    }
+
+    private func configurePriorityPicker() {
+        
     }
 }
 
