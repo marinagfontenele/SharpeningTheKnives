@@ -2,24 +2,22 @@ import UIKit
 
 final class TaskBlockView: UIStackView {
 
+    private let block: TaskBlock
     private let titleLabel = UILabel()
     let tasksStackView = UIStackView()
     private let addButton = UIButton()
     private let blockView = UIView()
-    private weak var viewController: UIViewController?
 
-    init(title: String) {
+    init(block: TaskBlock) {
+        self.block = block
         super.init(frame: .zero)
-        configure(title: title)
+        configure(title: block.name)
         configureAddTaskButton()
-        setupExample()
+        loadTasks()
     }
 
     required init(coder: NSCoder) {
-        super.init(coder: coder)
-        configure(title: "")
-        configureAddTaskButton()
-        setupExample()
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func configure(title: String) {
@@ -106,6 +104,19 @@ final class TaskBlockView: UIStackView {
             addTask.bottomAnchor.constraint(equalTo: sheet.view.bottomAnchor)
         ])
 
+        addTask.onClose = { [weak sheet] in
+            sheet?.dismiss(animated: true)
+        }
+
+        addTask.onSave = { [weak self, weak sheet] name in
+            guard let self else { return }
+            let newItem = TaskItem(name: name, order: self.block.tasks.count)
+            self.block.tasks.append(newItem)
+            try? DataManager.shared.save()
+            sheet?.dismiss(animated: true)
+            self.loadTasks()
+        }
+
         sheet.modalPresentationStyle = .pageSheet
 
         if let presentation = sheet.sheetPresentationController {
@@ -116,7 +127,7 @@ final class TaskBlockView: UIStackView {
 
         findViewController()?.present(sheet, animated: true)
     }
-    
+
     private func findViewController() -> UIViewController? {
         var responder: UIResponder? = self
 
@@ -129,18 +140,31 @@ final class TaskBlockView: UIStackView {
 
         return nil
     }
-    
-    private func setupExample() {
 
-        let todayBlock = TaskCardView()
+    private func loadTasks() {
+        tasksStackView.arrangedSubviews.forEach { view in
+            tasksStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
 
-        let vacationBlock = TaskCardView()
-
-        tasksStackView.addArrangedSubview(todayBlock)
-        tasksStackView.addArrangedSubview(vacationBlock)
+        let tasks = block.tasks.sorted { $0.order < $1.order }
+        for task in tasks {
+            let taskView = TaskCardView(taskName: task.name, isCompleted: task.isCompleted)
+            tasksStackView.addArrangedSubview(taskView)
+        }
     }
+    
+//    private func setupExample() {
+//
+//        let todayBlock = TaskCardView()
+//
+//        let vacationBlock = TaskCardView()
+//
+//        tasksStackView.addArrangedSubview(todayBlock)
+//        tasksStackView.addArrangedSubview(vacationBlock)
+//    }
 }
 
 #Preview {
-    TaskBlockView(title: "Coisas para fazer hoje")
+    TaskBlockView(block: TaskBlock(name: "Coisas para fazer hoje"))
 }

@@ -8,6 +8,11 @@
 import UIKit
 
 final class AddTaskView: UIStackView {
+    
+    // variável recebe uma string e não retorna nada
+    var onSave: ((String) -> Void)?
+    // variável não recee nada e não retorna nada
+    var onClose: (() -> Void)?
 
     private let titleLabel = UILabel()
     private let informationLabel = UILabel()
@@ -150,6 +155,18 @@ final class AddTaskView: UIStackView {
             action: #selector(textDidChange),
             for: .editingChanged
         )
+        
+        closeButton.addTarget(
+            self,
+            action: #selector(closeTapped),
+            for: .touchUpInside
+        )
+
+        saveButton.addTarget(
+            self,
+            action: #selector(saveTapped),
+            for: .touchUpInside
+        )
 
         addArrangedSubview(navBarView)
         addArrangedSubview(informationLabel)
@@ -166,6 +183,23 @@ final class AddTaskView: UIStackView {
 
     @objc private func textDidChange() {
         titulo = nameInput.text ?? ""
+    }
+    
+    @objc private func closeTapped() {
+        // verifica se tem uma função armazenada em onclose()
+        // se existir, executa, se não, simplesmente não faz nada
+        onClose?()
+    }
+
+    @objc private func saveTapped() {
+        //remove espaços em branco e quebras de linha
+        let name = titulo.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        //guard: verifica uma condição e interrompe a execução caso ela não seja atendida.
+        guard !name.isEmpty else { return }
+        
+        //Se existir uma função armazenada em onSave, ela será executada, recebendo o nome que acabou de ser validado
+        onSave?(name)
     }
 }
 
