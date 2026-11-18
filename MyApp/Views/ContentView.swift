@@ -159,15 +159,18 @@ final class ContentView: UIViewController {
         let blocks = (try? DataManager.shared.fetchTaskBlocks()) ?? []
         for block in blocks {
             let blockView = TaskBlockView(block: block)
+            blockView.onDelete = { [weak self] in
+                self?.loadBlocks()
+            }
             blocksStackView.addArrangedSubview(blockView)
         }
     }
 }
 
-//#Preview {
+#Preview {
 //    let container = try! ModelContainer(
 //        for: TaskBlock.self, TaskItem.self, Tag.self, Subtask.self, Project.self,
 //            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
 //        )
-//        return ContentView(container: container)
-//}
+        return ContentView(/*container: container*/)
+}
