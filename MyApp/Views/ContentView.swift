@@ -39,7 +39,7 @@ final class ContentView: UIViewController {
         configureHeader()
         configureBlocks()
         configureAddBlockButton()
-        setupExample()
+        loadBlocks()
     }
 
     private func configureHeader() {
@@ -125,6 +125,20 @@ final class ContentView: UIViewController {
             addBlock.bottomAnchor.constraint(equalTo: sheet.view.bottomAnchor)
         ])
 
+        //atribui função à variável onclose()
+        // weak usado apenas para evitar que a closure mantenha uma referência forte ao sheet, o que poderia contribuir para um ciclo de retenção de memória.
+        addBlock.onClose = { [weak sheet] in
+            sheet?.dismiss(animated: true)
+        }
+
+        addBlock.onSave = { [weak self, weak sheet] name in
+            let blocks = (try? DataManager.shared.fetchTaskBlocks()) ?? []
+            let newBlock = TaskBlock(name: name, order: blocks.count)
+            try? DataManager.shared.addTaskBlock(newBlock)
+            sheet?.dismiss(animated: true)
+            self?.loadBlocks()
+        }
+
         sheet.modalPresentationStyle = .pageSheet
 
         if let presentation = sheet.sheetPresentationController {
@@ -136,21 +150,27 @@ final class ContentView: UIViewController {
         present(sheet, animated: true)
     }
 
-    private func setupExample() {
+    private func loadBlocks() {
+        blocksStackView.arrangedSubviews.forEach { view in
+            blocksStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
 
-        let todayBlock = TaskBlockView(title: "Coisas para fazer hoje")
-
-        let vacationBlock = TaskBlockView(title: "Tarefas para as férias")
-
-        blocksStackView.addArrangedSubview(todayBlock)
-        blocksStackView.addArrangedSubview(vacationBlock)
+        let blocks = (try? DataManager.shared.fetchTaskBlocks()) ?? []
+        for block in blocks {
+            let blockView = TaskBlockView(block: block)
+            blockView.onDelete = { [weak self] in
+                self?.loadBlocks()
+            }
+            blocksStackView.addArrangedSubview(blockView)
+        }
     }
 }
 
-//#Preview {
+#Preview {
 //    let container = try! ModelContainer(
 //        for: TaskBlock.self, TaskItem.self, Tag.self, Subtask.self, Project.self,
 //            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
 //        )
-//        return ContentView(container: container)
-//}
+        return ContentView(/*container: container*/)
+}

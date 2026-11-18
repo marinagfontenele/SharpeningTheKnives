@@ -2,24 +2,25 @@ import UIKit
 
 final class TaskBlockView: UIStackView {
 
+    var onDelete: (() -> Void)?
+
+    private let block: TaskBlock
     private let titleLabel = UILabel()
     let tasksStackView = UIStackView()
     private let addButton = UIButton()
+    private let deleteButton = UIButton()
     private let blockView = UIView()
-    private weak var viewController: UIViewController?
 
-    init(title: String) {
+    init(block: TaskBlock) {
+        self.block = block
         super.init(frame: .zero)
-        configure(title: title)
+        configure(title: block.name)
         configureAddTaskButton()
-        setupExample()
+        loadTasks()
     }
 
     required init(coder: NSCoder) {
-        super.init(coder: coder)
-        configure(title: "")
-        configureAddTaskButton()
-        setupExample()
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func configure(title: String) {
@@ -57,7 +58,7 @@ final class TaskBlockView: UIStackView {
         
         let config = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
         
-        addButton.setImage(UIImage(systemName: "plus.circle.fill", withConfiguration: config), for: .normal)
+        addButton.setImage(UIImage(systemName: "ellipsis.circle.fill", withConfiguration: config), for: .normal)
         addButton.tintColor = .lavander
         
         //adição de views
@@ -82,15 +83,26 @@ final class TaskBlockView: UIStackView {
     }
     
     private func configureAddTaskButton() {
-        addButton.addTarget(
-            self,
-            action: #selector(openTaskBlock),
-            for: .touchUpInside
-        )
+        let addTaskAction = UIAction(
+            title: "Adicionar tarefa",
+            image: UIImage(systemName: "plus")
+        ) { [weak self] _ in
+            self?.presentAddTaskSheet()
+        }
+
+        let deleteBlockAction = UIAction(
+            title: "Apagar bloco",
+            image: UIImage(systemName: "trash"),
+            attributes: .destructive
+        ) { [weak self] _ in
+            self?.confirmDeleteBlock()
+        }
+
+        addButton.menu = UIMenu(children: [addTaskAction, deleteBlockAction])
+        addButton.showsMenuAsPrimaryAction = true
     }
-    
-    
-    @objc private func openTaskBlock() {
+
+    private func presentAddTaskSheet() {
         let addTask = AddTaskView()
 
         let sheet = UIViewController()
@@ -106,6 +118,19 @@ final class TaskBlockView: UIStackView {
             addTask.bottomAnchor.constraint(equalTo: sheet.view.bottomAnchor)
         ])
 
+        addTask.onClose = { [weak sheet] in
+            sheet?.dismiss(animated: true)
+        }
+
+        addTask.onSave = { [weak self, weak sheet] name, priority in
+            guard let self else { return }
+            let newItem = TaskItem(name: name, priority: priority, order: self.block.tasks.count)
+            self.block.tasks.append(newItem)
+            try? DataManager.shared.save()
+            sheet?.dismiss(animated: true)
+            self.loadTasks()
+        }
+
         sheet.modalPresentationStyle = .pageSheet
 
         if let presentation = sheet.sheetPresentationController {
@@ -116,7 +141,24 @@ final class TaskBlockView: UIStackView {
 
         findViewController()?.present(sheet, animated: true)
     }
-    
+
+    private func confirmDeleteBlock() {
+        let alert = UIAlertController(
+            title: "Apagar bloco",
+            message: "Tem certeza que deseja apagar este bloco? As tarefas pertencentes a ele também serão apagadas.",
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Apagar", style: .destructive) { [weak self] _ in
+            guard let self else { return }
+            try? DataManager.shared.deleteTaskBlock(self.block)
+            self.onDelete?()
+        })
+
+        findViewController()?.present(alert, animated: true)
+    }
+
     private func findViewController() -> UIViewController? {
         var responder: UIResponder? = self
 
@@ -129,18 +171,52 @@ final class TaskBlockView: UIStackView {
 
         return nil
     }
-    
-    private func setupExample() {
 
-        let todayBlock = TaskCardView()
+    private func loadTasks() {
+        tasksStackView.arrangedSubviews.forEach { view in
+            tasksStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
 
-        let vacationBlock = TaskCardView()
-
-        tasksStackView.addArrangedSubview(todayBlock)
-        tasksStackView.addArrangedSubview(vacationBlock)
+        let tasks = block.tasks.sorted { $0.order < $1.order }
+        for task in tasks {
+            let taskView = TaskCardView(
+                taskName: task.name,
+                isCompleted: task.isCompleted,
+                priority: task.priority
+            )
+            tasksStackView.addArrangedSubview(taskView)
+        }
     }
+    
+    private func showAlert(from viewController: UIViewController) {
+        let alert = UIAlertController(
+            title: "Atenção",
+            message: "Digite um título para a tarefa.",
+            preferredStyle: .alert
+        )
+
+        let okAction = UIAlertAction(
+            title: "OK",
+            style: .default
+        )
+
+        alert.addAction(okAction)
+
+        viewController.present(alert, animated: true)
+    }
+    
+//    private func setupExample() {
+//
+//        let todayBlock = TaskCardView()
+//
+//        let vacationBlock = TaskCardView()
+//
+//        tasksStackView.addArrangedSubview(todayBlock)
+//        tasksStackView.addArrangedSubview(vacationBlock)
+//    }
 }
 
 #Preview {
-    TaskBlockView(title: "Coisas para fazer hoje")
+    TaskBlockView(block: TaskBlock(name: "Coisas para fazer hoje"))
 }

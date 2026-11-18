@@ -3,13 +3,18 @@ import UIKit
 
 final class AddBlockView: UIStackView {
 
+    // variável recebe uma string e não retorna nada
+    var onSave: ((String) -> Void)?
+    // variável não recee nada e não retorna nada
+    var onClose: (() -> Void)?
+
     private let titleLabel = UILabel()
     private let informationLabel = UILabel()
     private let navBarView = UIStackView()
     private let saveButton = UIButton()
     private let closeButton = UIButton()
     private let nameInput = PaddedTextField()
-    
+
     let checkConfig = UIImage.SymbolConfiguration(
         pointSize: 40,
         weight: .regular
@@ -145,13 +150,25 @@ final class AddBlockView: UIStackView {
             for: .editingChanged
         )
 
+        closeButton.addTarget(
+            self,
+            action: #selector(closeTapped),
+            for: .touchUpInside
+        )
+
+        saveButton.addTarget(
+            self,
+            action: #selector(saveTapped),
+            for: .touchUpInside
+        )
+
         addArrangedSubview(navBarView)
         addArrangedSubview(informationLabel)
-        
+
         setCustomSpacing(10, after: informationLabel)
-        
+
         addArrangedSubview(nameInput)
-        
+
         let spacer = UIView()
         spacer.setContentHuggingPriority(.defaultLow, for: .vertical)
         spacer.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
@@ -160,6 +177,23 @@ final class AddBlockView: UIStackView {
 
     @objc private func textDidChange() {
         titulo = nameInput.text ?? ""
+    }
+
+    @objc private func closeTapped() {
+        // verifica se tem uma função armazenada em onclose()
+        // se existir, executa, se não, simplesmente não faz nada
+        onClose?()
+    }
+
+    @objc private func saveTapped() {
+        //remove espaços em branco e quebras de linha
+        let name = titulo.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        //guard: verifica uma condição e interrompe a execução caso ela não seja atendida.
+        guard !name.isEmpty else { return }
+        
+        //Se existir uma função armazenada em onSave, ela será executada, recebendo o nome que acabou de ser validado
+        onSave?(name)
     }
 }
 
