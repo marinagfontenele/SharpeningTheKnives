@@ -180,11 +180,12 @@ final class TaskBlockView: UIStackView {
 
         let tasks = block.tasks.sorted { $0.order < $1.order }
         for task in tasks {
-            let taskView = TaskCardView(
-                taskName: task.name,
-                isCompleted: task.isCompleted,
-                priority: task.priority
-            )
+            let taskView = TaskCardView(task: task) { [weak self] in
+                guard let self else { return }
+                self.block.tasks.removeAll { $0.id == task.id }
+                try? DataManager.shared.deleteTaskItem(task)
+                self.loadTasks()
+            }
             tasksStackView.addArrangedSubview(taskView)
         }
     }
@@ -205,16 +206,6 @@ final class TaskBlockView: UIStackView {
 
         viewController.present(alert, animated: true)
     }
-    
-//    private func setupExample() {
-//
-//        let todayBlock = TaskCardView()
-//
-//        let vacationBlock = TaskCardView()
-//
-//        tasksStackView.addArrangedSubview(todayBlock)
-//        tasksStackView.addArrangedSubview(vacationBlock)
-//    }
 }
 
 #Preview {
