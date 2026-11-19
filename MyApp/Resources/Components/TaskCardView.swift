@@ -84,19 +84,35 @@ final class TaskCard: UIView {
     }
 }
 
-final class TaskCardView: UIView {
+final class TaskCardView: UIView, UIContextMenuInteractionDelegate {
+
+    private let taskLabel = TaskLabel()
+    private var onDelete: (() -> Void)?
+
+    init(taskName: String = "Fazer as unhas", isCompleted: Bool = false, priority: Priority? = nil, onDelete: (() -> Void)? = nil) {
+        self.onDelete = onDelete
+        super.init(frame: .zero)
+        setupCards(taskName: taskName, isCompleted: isCompleted, priority: priority)
+        configureContextMenu()
+    }
+
+    convenience init(task: TaskItem, onDelete: (() -> Void)? = nil) {
+        self.init(taskName: task.name, isCompleted: task.isCompleted, priority: task.priority, onDelete: onDelete)
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupCards()
+        setupCards(taskName: "Fazer as unhas", isCompleted: false, priority: nil)
+        configureContextMenu()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupCards()
+        setupCards(taskName: "Fazer as unhas", isCompleted: false, priority: nil)
+        configureContextMenu()
     }
 
-    private func setupCards() {
+    private func setupCards(taskName: String, isCompleted: Bool, priority: Priority?) {
 
         let card = TaskCard()
 
@@ -123,20 +139,19 @@ final class TaskCardView: UIView {
             checkButton.heightAnchor.constraint(equalToConstant: 26)
         ])
 
-        let label = TaskLabel()
+        taskLabel.text = taskName
+        taskLabel.font = .boldSystemFont(ofSize: 18)
+        taskLabel.textColor = .white
+        taskLabel.isCompleted = isCompleted
 
-        label.text = "Fazer as unhas"
-        label.font = .boldSystemFont(ofSize: 18)
-        label.textColor = .white
-        label.isCompleted = true
-
-        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        taskLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        taskLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         let indicator = UIView()
 
-        indicator.backgroundColor = .systemRed
+        indicator.backgroundColor = priority?.color
         indicator.layer.cornerRadius = 6
+        indicator.isHidden = priority == nil
 
         NSLayoutConstraint.activate([
 
@@ -145,22 +160,10 @@ final class TaskCardView: UIView {
 
         ])
 
-       // let addButton = AddSubtaskButton()
-
-       // addButton.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-
-         //   addButton.widthAnchor.constraint(equalToConstant: 26),
-          //  addButton.heightAnchor.constraint(equalToConstant: 26)
-
-        ])
-
         let stackView = UIStackView(arrangedSubviews: [
             checkButton,
-            label,
+            taskLabel,
             indicator,
-         //   addButton
         ])
 
         stackView.axis = .horizontal
@@ -181,13 +184,27 @@ final class TaskCardView: UIView {
 
         ])
 
-        checkButton.onToggle = { isChecked in
-            label.isCompleted = isChecked
+        checkButton.onToggle = { [weak self] isChecked in
+            self?.taskLabel.isCompleted = isChecked
         }
 
-        checkButton.setChecked(true)
-        
+        checkButton.setChecked(isCompleted)
+
         heightAnchor.constraint(equalToConstant: 72).isActive = true
+    }
+
+    private func configureContextMenu() {
+        isUserInteractionEnabled = true
+        let interaction = UIContextMenuInteraction(delegate: self)
+        addInteraction(interaction)
+    }
+
+    func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        configurationForMenuAtLocation location: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard let onDelete else { return nil }
+        return TaskMenu.contextMenuConfiguration(onDelete: onDelete)
     }
 }
 

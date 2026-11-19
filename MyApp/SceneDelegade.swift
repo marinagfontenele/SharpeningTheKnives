@@ -4,7 +4,7 @@
 //
 //  Created by Marina Gomes Fontenele on 16/11/26.
 //
-
+//import SwiftData
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -20,8 +20,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
 
+        
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = ContentView()
+
         self.window = window
         window.makeKeyAndVisible()
     }

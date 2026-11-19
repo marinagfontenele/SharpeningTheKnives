@@ -1,7 +1,10 @@
+import SwiftData
 import Foundation
 
-struct Tag: Identifiable, Codable, Hashable {
-    let id: UUID
+@Model
+final class Tag{
+    
+    var id: UUID
     var name: String
 
     init(id: UUID = UUID(), name: String) {
