@@ -84,23 +84,32 @@ final class TaskCard: UIView {
     }
 }
 
-final class TaskCardView: UIView {
+final class TaskCardView: UIView, UIContextMenuInteractionDelegate {
 
     private let taskLabel = TaskLabel()
+    private var onDelete: (() -> Void)?
 
-    init(taskName: String = "Fazer as unhas", isCompleted: Bool = false, priority: Priority? = nil) {
+    init(taskName: String = "Fazer as unhas", isCompleted: Bool = false, priority: Priority? = nil, onDelete: (() -> Void)? = nil) {
+        self.onDelete = onDelete
         super.init(frame: .zero)
         setupCards(taskName: taskName, isCompleted: isCompleted, priority: priority)
+        configureContextMenu()
+    }
+
+    convenience init(task: TaskItem, onDelete: (() -> Void)? = nil) {
+        self.init(taskName: task.name, isCompleted: task.isCompleted, priority: task.priority, onDelete: onDelete)
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupCards(taskName: "Fazer as unhas", isCompleted: false, priority: nil)
+        configureContextMenu()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupCards(taskName: "Fazer as unhas", isCompleted: false, priority: nil)
+        configureContextMenu()
     }
 
     private func setupCards(taskName: String, isCompleted: Bool, priority: Priority?) {
@@ -182,6 +191,20 @@ final class TaskCardView: UIView {
         checkButton.setChecked(isCompleted)
 
         heightAnchor.constraint(equalToConstant: 72).isActive = true
+    }
+
+    private func configureContextMenu() {
+        isUserInteractionEnabled = true
+        let interaction = UIContextMenuInteraction(delegate: self)
+        addInteraction(interaction)
+    }
+
+    func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        configurationForMenuAtLocation location: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard let onDelete else { return nil }
+        return TaskMenu.contextMenuConfiguration(onDelete: onDelete)
     }
 }
 
